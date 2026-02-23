@@ -81,7 +81,6 @@ window.addEventListener("keypress", function onEvent(event) {
 
 });
 
-// 读取并显示计数（初始值设为0，如需1可修改defaultData里的数值）
 function loadCountData() {
     var today = new Date().toLocaleDateString();
     var defaultData = {
@@ -92,18 +91,15 @@ function loadCountData() {
         totalFail: 0
     };
 
-    // 获取本地存储数据，无数据则用默认值
     var storedData = localStorage.getItem('cfopCount');
     var data = storedData ? JSON.parse(storedData) : defaultData;
 
-    // 跨天重置今日计数
     if (data.today !== today) {
         data.today = today;
         data.todaySuccess = 0;
         data.todayFail = 0;
     }
 
-    // 更新页面显示
     var elTodaySuccess = document.getElementById('todaySuccess');
     var elTodayFail = document.getElementById('todayFail');
     var elTotalSuccess = document.getElementById('totalSuccess');
@@ -114,28 +110,23 @@ function loadCountData() {
     if (elTotalSuccess) elTotalSuccess.innerText = data.totalSuccess;
     if (elTotalFail) elTotalFail.innerText = data.totalFail;
 
-    // 计算成功率
     function calcRate(success, fail) {
         var total = success + fail;
         if (total === 0) return "0%";
         return Math.round((success / total) * 100) + "%";
     }
 
-    // 更新成功率显示
     var elTodayRate = document.getElementById('todayRate');
     var elTotalRate = document.getElementById('totalRate');
 
     if (elTodayRate) elTodayRate.innerText = calcRate(data.todaySuccess, data.todayFail);
     if (elTotalRate) elTotalRate.innerText = calcRate(data.totalSuccess, data.totalFail);
 
-    // 保存数据
     localStorage.setItem('cfopCount', JSON.stringify(data));
 }
 
-// 成功 +1
 function recordSuccess() {
     try {
-        // 先执行打乱（加try避免打乱函数报错阻断计数）
         NewScramble();
     } catch (e) {
         console.log('打乱函数执行异常，但不影响计数:', e);
@@ -160,10 +151,9 @@ function recordSuccess() {
     data.totalSuccess++;
 
     localStorage.setItem('cfopCount', JSON.stringify(data));
-    loadCountData(); // 更新显示
+    loadCountData(); 
 }
 
-// 失败 +1
 function recordFail() {
     try {
         NewScramble();
@@ -190,15 +180,13 @@ function recordFail() {
     data.totalFail++;
 
     localStorage.setItem('cfopCount', JSON.stringify(data));
-    loadCountData(); // 更新显示
+    loadCountData(); 
 }
 
-// 计算成功率
 function calcRate(success, fail) {
     const total = success + fail;
     if (total === 0) return "0%";
     return Math.round((success / total) * 100) + "%";
 }
 
-// 页面加载时初始化计数显示
 window.addEventListener('load', loadCountData);
